@@ -24,4 +24,5 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-CMD ["php-fpm"]
+EXPOSE 10000
+CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
