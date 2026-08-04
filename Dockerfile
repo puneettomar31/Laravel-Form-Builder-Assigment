@@ -21,6 +21,7 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 COPY . ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN if [ ! -f .env ]; then cp .env.example .env && php artisan key:generate --force; fi
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
