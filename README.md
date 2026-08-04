@@ -1,58 +1,214 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AI-Powered Form Builder
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Live demo:** Not deployed yet. Deploy with `docker-compose up --build` or a platform like Render/Railway.
 
-## About Laravel
+## What this project delivers
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This repository implements a Laravel + Livewire form builder with:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Manual form creation, inline editing, reorder/duplicate/delete controls
+- JSON schema as the single source of truth, with raw editor sync
+- Public form fill URLs using UUIDs
+- Server-side schema-driven validation
+- Submission storage, search, pagination, and CSV export
+- Word and Excel import preview + editable mapping
+- Queued AI form generation with visible task status and error logging
+- Docker configuration for local development and deployment
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## What still needs live deployment
 
-## Learning Laravel
+- A hosted public demo URL is not yet available
+- Production auth / role management is not implemented
+- Drag-and-drop field ordering is not implemented; current reorder uses buttons
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Setup
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+1. Copy `.env.example` to `.env` and generate the app key:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2. Install dependencies:
 
-## Contributing
+```bash
+composer install
+npm install
+npm run build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Configure `.env` for MySQL and queue:
 
-## Code of Conduct
+```env
+APP_URL=http://localhost:8000
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_form_builder
+DB_USERNAME=root
+DB_PASSWORD=root
+QUEUE_CONNECTION=database
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o-mini
+FILESYSTEM_DISK=public
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Run migrations and seeders:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. Start local services:
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+php artisan queue:work
+```
+
+## Docker local launch
+
+```bash
+docker compose up --build
+```
+
+Then visit `http://localhost:8000`.
+
+## Deployment plan
+
+This project is ready to deploy on Render or Railway. The recommended approach is:
+
+1. Push the repository to GitHub.
+2. Create a new Web Service on Render or Railway.
+3. Set the build commands:
+
+```bash
+composer install --no-interaction --optimize-autoloader
+npm install
+npm run build
+php artisan key:generate
+php artisan migrate --force
+php artisan storage:link
+```
+
+4. Set the start command:
+
+```bash
+php artisan serve --host=0.0.0.0 --port=$PORT
+```
+
+5. Add these environment variables:
+
+- `APP_URL` set to the deployed URL
+- `DB_CONNECTION=mysql`
+- `DB_HOST` and `DB_PORT` from the managed MySQL service
+- `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+- `QUEUE_CONNECTION=database`
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL=gpt-4o-mini`
+- `FILESYSTEM_DISK=public`
+
+6. Add a worker service with the command:
+
+```bash
+php artisan queue:work --sleep=3 --tries=3
+```
+
+7. Use `storage:link` in deployment either on build or startup so uploaded files are served correctly.
+
+If a live demo URL is not available yet, the app is deploy-ready with documented steps and Docker support.
+
+## Usage
+
+- `/` — list saved forms
+- `/forms/create` — build a new form manually
+- `/import` — upload `.docx` or `.xlsx` and preview import
+- `/ai` — queue AI generation and see task status
+- public fill link on each form card
+- submissions page with search and CSV export
+
+## Supported field types
+
+- text, textarea, number, email, phone, url, date
+- dropdown, radio, checkbox, file upload, heading, rating
+
+## Import formats
+
+### Excel import
+
+Use an `.xlsx` file with a header row containing at least:
+
+- `label`
+- `type`
+
+Optional columns:
+
+- `key`
+- `placeholder`
+- `required` (`true`/`false` or `yes`/`no`)
+- `options` (`Option A|Option B|Option C`)
+
+### Word import
+
+- Headings in `.docx` are parsed as section headings
+- Questions ending in `?` become text fields
+- Yes/no or comma-separated choice text becomes checkbox options
+
+## AI prompt strategy
+
+- System prompt enforces `JSON only`, a top-level `fields` array, and field contract
+- The app validates AI output before saving
+- If the AI response is invalid, it retries once and requests valid JSON again
+- `AiTask` records `model`, `tokens`, `latency_ms`, and errors
+
+## Database model summary
+
+- `forms`: stores title, slug, description, `public_uuid`, JSON `schema`, status, timestamps
+- `form_submissions`: stores form_id, JSON `submission_data`, `search_text`, user metadata, file paths, timestamps
+- `ai_tasks`: tracks queued AI prompt requests, status, schema output, model, tokens, latency, and errors
+
+## Indexes and performance
+
+- `forms.slug` and `forms.public_uuid` are unique
+- `forms.status` is indexed for published form filtering
+- `form_submissions.form_id` and `search_text` are indexed for fast lookup
+- `ai_tasks.form_id` and `ai_tasks.status` are indexed for background task monitoring
+
+## Sample files
+
+- `samples/import-sample.xlsx`
+- `samples/import-sample.docx`
+
+## Available commands
+
+```bash
+php artisan migrate
+php artisan db:seed
+php artisan queue:work
+npm run build
+docker compose up --build
+```
+
+## Known limitations
+
+- No hosted live demo URL in this repo yet
+- No production authentication or authorization
+- No drag-and-drop field ordering
+- Import parsing is deterministic and may need stronger AI-assisted ambiguity handling
+- No rate-limiting / spam protection for public forms
+
+## Deliverables
+
+- `README.md` with setup, architecture, AI strategy, and limitations
+- `DECISIONS.md` with assumptions, trade-offs, and Part D ideas
+- `database/seeders` and `database/dump.sql`
+- `samples/` with import examples
+- `Dockerfile`, `docker-compose.yml`, `Procfile`, and `DEPLOY.md`
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
+
