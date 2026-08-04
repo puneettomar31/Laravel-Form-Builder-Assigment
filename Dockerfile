@@ -19,10 +19,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock ./
-RUN mkdir -p storage/framework/{cache,data,sessions,views} bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache
+RUN mkdir -p storage/framework/{cache,data,sessions,views} storage/logs bootstrap/cache && chmod -R 0777 storage bootstrap/cache
 COPY . ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
-RUN if [ ! -f .env ]; then cp .env.example .env && php artisan key:generate --force; fi
+RUN if [ ! -f .env ]; then cp .env.example .env && php artisan key:generate --force --no-interaction; fi
 RUN php artisan package:discover --ansi
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
