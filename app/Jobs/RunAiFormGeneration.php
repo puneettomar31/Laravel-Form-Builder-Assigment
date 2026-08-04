@@ -7,8 +7,8 @@ use App\Models\Form;
 use App\Services\AiFormGenerator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\InteractsWithQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Bus\Queueable;
 use Illuminate\Support\Str;
 
 class RunAiFormGeneration implements ShouldQueue
