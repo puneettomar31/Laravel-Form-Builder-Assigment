@@ -21,8 +21,8 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 RUN mkdir -p storage bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache
 COPY . ./
-RUN if [ ! -f .env ]; then cp .env.example .env && php artisan key:generate --force; fi
 RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN if [ ! -f .env ]; then cp .env.example .env && php artisan key:generate --force; fi
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
