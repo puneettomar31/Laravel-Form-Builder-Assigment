@@ -19,8 +19,11 @@ php artisan migrate --force
 # Create storage symlink for public assets.
 php artisan storage:link
 
+PORT=${PORT:-10000}
+
 if [ "$QUEUE_WORKER" = "true" ]; then
   php artisan queue:work database --sleep=3 --tries=3 --timeout=90
 else
-  php artisan serve --host=0.0.0.0 --port=10000
+  echo "Starting server on port $PORT"
+  php artisan serve --host=0.0.0.0 --port="$PORT"
 fi
