@@ -161,3 +161,41 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('livewire:load', function () {
+        let draggedIndex = null;
+
+        function findCard(element) {
+            return element.closest('[data-field-index]');
+        }
+
+        document.addEventListener('dragstart', function (event) {
+            const card = findCard(event.target);
+            if (!card) {
+                return;
+            }
+            draggedIndex = Number(card.dataset.fieldIndex);
+            event.dataTransfer.effectAllowed = 'move';
+        });
+
+        document.addEventListener('dragover', function (event) {
+            if (findCard(event.target)) {
+                event.preventDefault();
+            }
+        });
+
+        document.addEventListener('drop', function (event) {
+            event.preventDefault();
+            const card = findCard(event.target);
+            if (!card || draggedIndex === null) {
+                return;
+            }
+            const targetIndex = Number(card.dataset.fieldIndex);
+            if (draggedIndex !== targetIndex) {
+                Livewire.emit('fieldReordered', draggedIndex, targetIndex);
+            }
+            draggedIndex = null;
+        });
+    });
+</script>

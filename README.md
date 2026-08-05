@@ -19,7 +19,7 @@ This repository implements a Laravel + Livewire form builder with:
 
 - A hosted public demo URL is not yet available
 - Production auth / role management is not implemented
-- Drag-and-drop field ordering is not implemented; current reorder uses buttons
+
 
 ## Setup
 
@@ -196,7 +196,6 @@ docker compose up --build
 
 - No hosted live demo URL in this repo yet
 - No production authentication or authorization
-- No drag-and-drop field ordering
 - Import parsing is deterministic and may need stronger AI-assisted ambiguity handling
 - No rate-limiting / spam protection for public forms
 
@@ -207,6 +206,17 @@ docker compose up --build
 - `database/seeders` and `database/dump.sql`
 - `samples/` with import examples
 - `Dockerfile`, `docker-compose.yml`, `Procfile`, and `DEPLOY.md`
+
+## Handoff guidance
+
+Deliver this repository as the deployment-ready source package. Include:
+
+- the full project source code
+- `README.md`, `DEPLOY.md`, and `DECISIONS.md`
+- sample import files in `samples/`
+- database migrations and seeders
+
+If the client needs a live demo, note that the app is deploy-ready but does not yet have a public hosted URL.
 
 ## License
 

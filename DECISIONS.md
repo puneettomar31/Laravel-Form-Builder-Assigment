@@ -54,7 +54,6 @@ This document explains the architecture decisions, assumptions, Part D choices, 
 ## Known limitations
 - No hosted public demo URL is included yet.
 - No production authentication/authorization.
-- No drag-and-drop field ordering; only button-based reordering.
 - Import parsing may misclassify ambiguous Word or Excel lines.
 - There is no spam/rate-limiting protection on public submission endpoints.
 
