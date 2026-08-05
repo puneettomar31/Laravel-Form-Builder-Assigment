@@ -24,35 +24,46 @@ SYSTEM;
         ];
 
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
-            $response = $this->client->responses()->create([
-                'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
-                'input' => $messages,
-                'max_tokens' => 900,
-            ]);
+            try {
+                $response = $this->client->responses()->create([
+                    'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+                    'input' => $messages,
+                    'max_output_tokens' => 900,
+                ]);
 
-            $output = data_get($response, 'output.0.content.0.text');
-            $tokens = data_get($response, 'usage.total_tokens');
+                $output = data_get($response, 'output.0.content.0.text');
+                $tokens = data_get($response, 'usage.total_tokens');
 
-            if (! $output) {
-                if ($attempt === $attempts) {
-                    throw new \RuntimeException('AI response did not contain text output.');
+                if (! $output) {
+                    if ($attempt === $attempts) {
+                        throw new \RuntimeException('AI response did not contain text output.');
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            $schema = json_decode($output, true);
-            if (json_last_error() !== JSON_ERROR_NONE || ! is_array($schema) || ! isset($schema['fields']) || ! is_array($schema['fields'])) {
-                if ($attempt === $attempts) {
-                    throw new \RuntimeException('AI returned invalid JSON schema.');
+                $schema = json_decode($output, true);
+                if (json_last_error() !== JSON_ERROR_NONE || ! is_array($schema) || ! isset($schema['fields']) || ! is_array($schema['fields'])) {
+                    if ($attempt === $attempts) {
+                        throw new \RuntimeException('AI returned invalid JSON schema.');
+                    }
+                    $messages[] = ['role' => 'user', 'content' => 'The previous response was not valid JSON. Respond again with only the JSON schema object and no additional explanation.'];
+                    continue;
                 }
-                $messages[] = ['role' => 'user', 'content' => 'The previous response was not valid JSON. Respond again with only the JSON schema object and no additional explanation.'];
-                continue;
-            }
 
-            return [
-                'schema' => $schema,
-                'tokens' => $tokens ? intval($tokens) : null,
-            ];
+                return [
+                    'schema' => $schema,
+                    'tokens' => $tokens ? intval($tokens) : null,
+                ];
+            } catch (\Throwable $exception) {
+                $message = strtolower($exception->getMessage());
+
+                if ($attempt < $attempts && str_contains($message, 'rate limit')) {
+                    sleep(2 * $attempt);
+                    continue;
+                }
+
+                throw $exception;
+            }
         }
 
         throw new \RuntimeException('AI generation failed after multiple attempts.');
