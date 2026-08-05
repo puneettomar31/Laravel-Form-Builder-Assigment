@@ -47,12 +47,11 @@ This document explains the architecture decisions, assumptions, Part D choices, 
 
 ## Assumptions
 - The assignment expects Laravel 10/11 compatibility; Laravel 13 is acceptable as it is backwards compatible with PHP 8.3.
-- The required demo can be delivered as a deploy-ready repository even if no hosted URL is available yet.
+- A hosted public demo is available at https://laravel-form-builder-assigment.onrender.com.
 - Public forms are intentionally open for fill access; authentication is not part of the core brief.
 - Import parsing is deterministic first, with AI only as a possible next step for ambiguous content.
 
 ## Known limitations
-- No hosted public demo URL is included yet.
 - No production authentication/authorization.
 - Import parsing may misclassify ambiguous Word or Excel lines.
 - There is no spam/rate-limiting protection on public submission endpoints.
