@@ -56,6 +56,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Asset URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used by the framework when generating asset URLs. By default,
+    | it will fall back to APP_URL so Vite and other asset helpers load using
+    | the same host and scheme as the application.
+    |
+    */
+
+    'asset_url' => env('ASSET_URL', env('APP_URL', null)),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
