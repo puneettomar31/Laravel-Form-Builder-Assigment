@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -eux
 
 cd /var/www/html
 
@@ -20,6 +20,8 @@ echo "DATABASE_URL set=${DATABASE_URL:+yes}"
 echo "DB_HOST=${DB_HOST:-<unset>}"
 echo "DB_DATABASE=${DB_DATABASE:-<unset>}"
 
+env | grep -E '^(DB|DATABASE_URL|PORT|APP_)' || true
+
 php artisan config:clear
 
 # Run migrations automatically on container startup.
@@ -34,5 +36,5 @@ if [ "$QUEUE_WORKER" = "true" ]; then
   exec php artisan queue:work database --sleep=3 --tries=3 --timeout=90
 else
   echo "Starting server on port $PORT"
-  exec php artisan serve --host=0.0.0.0 --port="$PORT"
+  exec php -S 0.0.0.0:"$PORT" -t public public/index.php
 fi
