@@ -1,6 +1,6 @@
 # AI-Powered Form Builder
 
-**Live demo:** Not deployed yet. Deploy with `docker-compose up --build` or a platform like Render/Railway.
+**Live demo:** Deploy-ready. Add the public demo URL after hosting on Render, Railway, or a similar provider.
 
 ## What this project delivers
 
@@ -75,7 +75,7 @@ php artisan queue:work
 docker compose up --build
 ```
 
-Then visit `http://localhost:8000`.
+This will migrate the database, seed the sample contact form, create the storage link, and start the app on `http://localhost:8000`.
 
 ## Deployment plan
 

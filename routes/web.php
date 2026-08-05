@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [FormController::class, 'index'])->name('forms.index');
 Route::get('/forms/create', [FormController::class, 'create'])->name('forms.create');
 Route::get('/forms/{form}/edit', [FormController::class, 'edit'])->name('forms.edit');
-Route::get('/forms/{publicUuid}', [FormController::class, 'fill'])->name('forms.fill');
-Route::post('/forms/{publicUuid}', [FormSubmissionController::class, 'submit'])->name('forms.submit');
 Route::get('/forms/{form}/submissions', [FormSubmissionController::class, 'submissions'])->name('forms.submissions');
 Route::get('/forms/{form}/submissions/export', [FormSubmissionController::class, 'export'])->name('forms.submissions.export');
+Route::get('/forms/{publicUuid}', [FormController::class, 'fill'])->name('forms.fill')->whereUuid('publicUuid');
+Route::post('/forms/{publicUuid}', [FormSubmissionController::class, 'submit'])->name('forms.submit');
 
 Route::get('/import', [ImportController::class, 'index'])->name('forms.import');
 Route::post('/import/preview', [ImportController::class, 'preview'])->name('forms.import.preview');
