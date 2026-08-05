@@ -32,7 +32,7 @@ php artisan storage:link || true
 
 PORT=${PORT:-10000}
 
-if [ "$QUEUE_WORKER" = "true" ]; then
+if [ "${QUEUE_WORKER:-}" = "true" ]; then
   exec php artisan queue:work database --sleep=3 --tries=3 --timeout=90
 else
   echo "Starting server on port $PORT"
