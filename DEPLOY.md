@@ -107,7 +107,9 @@ php artisan serve --host=0.0.0.0 --port=$PORT
 ```
 
 5. Add environment variables in Render dashboard.
-
+   - If using Supabase or another managed Postgres provider, set `DATABASE_URL` with the full Postgres connection string.
+   - Do not leave `DB_CONNECTION=mysql` hard-coded when the database URL is Postgres.
+   - Ensure the runtime image supports `pdo_pgsql`.
 6. Add a separate Worker service with start command:
 
 ```bash

@@ -9,10 +9,11 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
+    libpq-dev \
     zip \
     curl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath xml zip gd
+    && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath xml zip gd
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 

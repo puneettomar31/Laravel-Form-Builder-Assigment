@@ -3,6 +3,25 @@
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 
+$defaultConnection = env('DB_CONNECTION');
+$databaseUrl = env('DB_URL', env('DATABASE_URL'));
+
+if (! empty($databaseUrl)) {
+    if (Str::startsWith($databaseUrl, ['pgsql://', 'postgres://', 'postgresql://'])) {
+        $defaultConnection = 'pgsql';
+    } elseif (Str::startsWith($databaseUrl, ['mysql://', 'mariadb://'])) {
+        $defaultConnection = 'mysql';
+    }
+
+    // Override explicitly wrong DB_CONNECTION when the URL clearly indicates another driver.
+    if ($defaultConnection === 'mysql' && Str::startsWith($databaseUrl, ['pgsql://', 'postgres://', 'postgresql://'])) {
+        $defaultConnection = 'pgsql';
+    }
+    if ($defaultConnection === 'pgsql' && Str::startsWith($databaseUrl, ['mysql://', 'mariadb://'])) {
+        $defaultConnection = 'mysql';
+    }
+}
+
 return [
 
     /*
@@ -17,7 +36,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => $defaultConnection ?: 'sqlite',
 
     /*
     |--------------------------------------------------------------------------
