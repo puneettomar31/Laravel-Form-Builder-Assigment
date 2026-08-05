@@ -22,13 +22,13 @@ echo "DB_DATABASE=${DB_DATABASE:-<unset>}"
 
 env | grep -E '^(DB|DATABASE_URL|PORT|APP_)' || true
 
-php artisan config:clear
+php artisan config:clear || true
 
 # Run migrations automatically on container startup.
-php artisan migrate --force
+php artisan migrate --force || true
 
 # Create storage symlink for public assets.
-php artisan storage:link
+php artisan storage:link || true
 
 PORT=${PORT:-10000}
 
