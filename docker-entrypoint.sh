@@ -4,7 +4,7 @@ set -eux
 cd /var/www/html
 
 # Sync live environment variables into .env so runtime uses Render's DB settings.
-for key in DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD DB_SSLMODE DATABASE_URL; do
+for key in APP_URL ASSET_URL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD DB_SSLMODE DATABASE_URL; do
   value=$(printenv "$key" 2>/dev/null || true)
   if [ -n "$value" ]; then
     grep -v "^${key}=" .env > .env.tmp
@@ -15,6 +15,8 @@ for key in DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD DB_
 
 # Print debug values for deploy verification.
 echo "Render startup: PORT=${PORT:-<unset>}"
+echo "APP_URL=${APP_URL:-<unset>}"
+echo "ASSET_URL=${ASSET_URL:-<unset>}"
 echo "DB_CONNECTION=${DB_CONNECTION:-<unset>}"
 echo "DATABASE_URL set=${DATABASE_URL:+yes}"
 echo "DB_HOST=${DB_HOST:-<unset>}"
