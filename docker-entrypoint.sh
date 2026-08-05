@@ -13,6 +13,15 @@ for key in DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD DB_
   fi
  done
 
+# Print debug values for deploy verification.
+echo "Render startup: PORT=${PORT:-<unset>}"
+echo "DB_CONNECTION=${DB_CONNECTION:-<unset>}"
+echo "DATABASE_URL set=${DATABASE_URL:+yes}"
+echo "DB_HOST=${DB_HOST:-<unset>}"
+echo "DB_DATABASE=${DB_DATABASE:-<unset>}"
+
+php artisan config:clear
+
 # Run migrations automatically on container startup.
 php artisan migrate --force
 
@@ -22,8 +31,8 @@ php artisan storage:link
 PORT=${PORT:-10000}
 
 if [ "$QUEUE_WORKER" = "true" ]; then
-  php artisan queue:work database --sleep=3 --tries=3 --timeout=90
+  exec php artisan queue:work database --sleep=3 --tries=3 --timeout=90
 else
   echo "Starting server on port $PORT"
-  php artisan serve --host=0.0.0.0 --port="$PORT"
+  exec php artisan serve --host=0.0.0.0 --port="$PORT"
 fi
