@@ -5,9 +5,10 @@ cd /var/www/html
 
 # Sync live environment variables into .env so runtime uses Render's DB settings.
 for key in DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD DB_SSLMODE DATABASE_URL; do
-  if [ -n "${!key}" ]; then
+  value=$(printenv "$key")
+  if [ -n "$value" ]; then
     grep -v "^${key}=" .env > .env.tmp
-    printf '%s=%s\n' "$key" "${!key}" >> .env.tmp
+    printf '%s=%s\n' "$key" "$value" >> .env.tmp
     mv .env.tmp .env
   fi
  done
