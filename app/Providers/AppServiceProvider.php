@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use OpenAI\OpenAI;
+use OpenAI\Client;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,8 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(OpenAI::class, function () {
-            return new OpenAI([ 'api_key' => env('OPENAI_API_KEY') ]);
+        $this->app->singleton(Client::class, function () {
+            return OpenAI::client(env('OPENAI_API_KEY'));
         });
     }
 

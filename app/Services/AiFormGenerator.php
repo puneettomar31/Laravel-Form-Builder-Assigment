@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use OpenAI\OpenAI;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use OpenAI\Client;
 
 class AiFormGenerator
 {
-    public function __construct(protected OpenAI $client)
+    public function __construct(protected Client $client)
     {
     }
 
@@ -24,7 +24,7 @@ SYSTEM;
         ];
 
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
-            $response = $this->client->responses->create([
+            $response = $this->client->responses()->create([
                 'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
                 'input' => $messages,
                 'max_tokens' => 900,
