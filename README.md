@@ -1,6 +1,8 @@
 # AI-Powered Form Builder
 
-**Live demo:** Deploy-ready. Add the public demo URL after hosting on Render, Railway, or a similar provider.
+**Live demo:** https://laravel-form-builder-assigment.onrender.com
+
+**AI page:** https://laravel-form-builder-assigment.onrender.com/ai
 
 ## What this project delivers
 
