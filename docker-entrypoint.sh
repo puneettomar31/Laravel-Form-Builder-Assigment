@@ -36,5 +36,5 @@ if [ "$QUEUE_WORKER" = "true" ]; then
   exec php artisan queue:work database --sleep=3 --tries=3 --timeout=90
 else
   echo "Starting server on port $PORT"
-  exec php -S 0.0.0.0:"$PORT" -t public public/index.php
+  exec php artisan serve --host=0.0.0.0 --port="$PORT"
 fi
